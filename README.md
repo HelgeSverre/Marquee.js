@@ -57,6 +57,12 @@ marquee.destroy();
 
 ### Options:
 
+TODO
 
 
-TODO: Fill out
+## Todo
+
+- [ ] Make better documentation
+- [ ] Make it ES6 friendly
+- [ ] Put it on NPM and all those fancy CDN places.
+- [x] Wonder why this was ever needed in the first place
