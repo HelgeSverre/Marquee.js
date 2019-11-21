@@ -112,8 +112,7 @@ var Marquee = function () {
 
     function findRightMostSentence() {
         var found = sentences[0];
-        debugger
-
+        
         for (var s of sentences) {
             // Replace found if this sentences is further left
             if (found.left < s.left) {
