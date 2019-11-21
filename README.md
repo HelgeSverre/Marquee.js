@@ -13,7 +13,7 @@ Why: Don't ask.
 
 ## Usage
 
-
+Check out the [demo](https://codepen.io/helgesverre/pen/OJJqGRd) on CodePen.
 
 
 ```html
