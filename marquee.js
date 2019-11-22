@@ -1,8 +1,9 @@
-var Marquee = function () {
-    var running = true;
+let Marquee = function () {
+    let running = true;
 
-    var options = {
+    let options = {
         fontSize: 25,
+        font: "Arial",
         color: "#000",
         bgColor: "#fff",
         speed: 5,
@@ -11,12 +12,11 @@ var Marquee = function () {
     };
 
     // Canvas
-    var canvas, ctx;
+    let canvas, ctx;
 
     // Sentence
-    var sentence = "marquee";
-    var sentences = [];
-    var sentenceWidth, sentenceHeight = 0;
+    let sentences = [];
+    let sentenceWidth, sentenceHeight = 0;
 
     function stop() {
         running = false;
@@ -32,7 +32,6 @@ var Marquee = function () {
         if (!canvasEl instanceof HTMLCanvasElement) {
             console.error("canvasEl must be an instance of a HTMLCanvasElement");
         }
-
 
         // Use defaults, only set the text
         if (typeof overrides === "string") {
@@ -50,41 +49,38 @@ var Marquee = function () {
         }
 
         options = overrides;
-
         canvas = canvasEl;
         ctx = canvas.getContext("2d");
 
-        sentence = options.text;
-
-        calculateSentenceMetrics();
+        reset();
         loop();
     }
 
     function resetFontSize() {
-        ctx.font = options.fontSize + "px Arial";
+        ctx.font = options.fontSize + "px " + options.font;
     }
 
-    function calculateSentenceMetrics() {
+    function reset() {
         // Resize canvas to fit the width
         ctx.canvas.width = window.innerWidth;
         ctx.canvas.height = 40;
 
         // Set the font-size so we can get the text metrics
         resetFontSize();
-        var measurement = ctx.measureText(sentence);
+        let measurement = ctx.measureText(options.text);
 
         // Get height and width of the sentence
-        sentenceWidth = measurement.width;
-        sentenceHeight = measurement.actualBoundingBoxAscent + measurement.actualBoundingBoxDescent;
+        sentenceWidth = Math.ceil(measurement.width);
+        sentenceHeight = Math.ceil(measurement.actualBoundingBoxAscent + measurement.actualBoundingBoxDescent);
 
-        // Resize the canvas height to fit the text, add 1 px padding on top and bottom to prevent clipping
+        // Resize the canvas height to fit the text, add 1 px padding on top and bottom to prevent weirdness
         ctx.canvas.height = sentenceHeight + 2;
 
         // When the canvas is resized the font is somehow reset, so we have to set it again here
         resetFontSize();
 
-        // How many sentences can we fit?
-        var canFit = Math.ceil(ctx.canvas.width / sentenceWidth * 2);
+        // How many sentences can we fit in the canvas?
+        let canFit = Math.ceil(ctx.canvas.width / sentenceWidth * 2);
         if (canFit < 2) canFit = 2;
 
 
@@ -98,9 +94,9 @@ var Marquee = function () {
     }
 
     function findLeftMostSentence() {
-        var found = sentences[0];
+        let found = {top: 0, left: 0};
 
-        for (var s of sentences) {
+        for (let s of sentences) {
             // Replace found if this sentences is further left
             if (found.left > s.left) {
                 found = s;
@@ -111,9 +107,9 @@ var Marquee = function () {
     }
 
     function findRightMostSentence() {
-        var found = sentences[0];
-        
-        for (var s of sentences) {
+        let found = sentences[0];
+
+        for (let s of sentences) {
             // Replace found if this sentences is further left
             if (found.left < s.left) {
                 found = s;
@@ -125,15 +121,14 @@ var Marquee = function () {
 
 
     function update() {
-        for (var s of sentences) {
+        for (let s of sentences) {
 
             if (options.direction === "left-to-right") {
                 // If this is outside the viewport on the right move it back to the start of the queue
                 if (s.left > ctx.canvas.width) {
-                    var leftMost = findLeftMostSentence();
-                    var offset = sentenceWidth + options.gap;
+                    let leftMost = findLeftMostSentence();
+                    let offset = sentenceWidth + options.gap;
 
-                    // Move it behind the leftmost sentence, aka put it offscreen before the other ones
                     s.left = leftMost.left - offset;
                 }
 
@@ -141,36 +136,42 @@ var Marquee = function () {
             } else if (options.direction === "right-to-left") {
                 // If this is outside the viewport on the left move it to the end of the queue
                 if (s.left < -(sentenceWidth + options.gap)) {
-                    var rightMost = findRightMostSentence();
-                    var offset = sentenceWidth + options.gap;
+                    let rightMost = findRightMostSentence();
+                    let offset = sentenceWidth + options.gap;
 
-                    // Move it behind the leftmost sentence, aka put it offscreen before the other ones
                     s.left = rightMost.left + offset;
                 }
 
                 s.left -= options.speed;
+            } else {
+                throw Error("Direction is invalid");
             }
         }
     }
 
-    function draw() {
+    function render() {
         // Clears the screen
         ctx.fillStyle = options.bgColor;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (options.bgColor.toLocaleLowerCase() === "transparent") {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        } else {
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
 
 
         // Draw the text
         ctx.fillStyle = options.color;
         ctx.textBaseline = "middle";
-        for (var s of sentences) {
-            ctx.fillText(sentence, s.left, s.top);
+        for (let s of sentences) {
+            ctx.fillText(options.text, s.left, s.top);
         }
     }
 
     function loop() {
         if (!running) return;
         update();
-        draw();
+        render();
 
         requestAnimationFrame(loop);
     }
@@ -190,12 +191,19 @@ var Marquee = function () {
         }
     }
 
+    function setFontSize(size) {
+        options.fontSize = size;
+        reset();
+    }
+
     return {
         init: init,
         stop: stop,
         start: start,
         destroy: destroy,
         swapDirection: swapDirection,
+        reset: reset,
+        setFontSize: setFontSize,
     }
 };
 

@@ -6,24 +6,21 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Scroll Text</title>
-
+    <link href="https://fonts.googleapis.com/css?family=Lobster&display=swap" rel="stylesheet">
     <style>
         html, body {
             padding: 0;
             margin: 0;
-            background-color: black;
+            background-color: #777;
         }
 
         canvas {
-            border-top: 1px solid black;
-            border-bottom: 1px solid black;
+            margin-top: 50px;
         }
     </style>
 </head>
 <body>
 
-
-<h1>Scrolling text</h1>
 
 <canvas id="canvas"></canvas>
 
@@ -31,14 +28,15 @@
 <script>
     var marquee = Marquee();
     marquee.init(document.getElementById("canvas"), {
-        text: "This text is scrolling",
-        fontSize: 25,
-        bgColor: "black",
-        gap: 10,
-        speed: 10,
-        color: "white",
-        // direction: "left-to-right"
-        direction: "right-to-left"
+        text: "The earth has been invaded", // The text to display
+        fontSize: 25, // The fontsize
+        font: "Lobster", // Can use a custom font if desired
+        bgColor: "transparent", // Canvas background color
+        gap: 100, // Gap between sentences
+        speed: 5.0, // How fast it scrolls, 1-10 is good
+        color: "white", // Text color
+        direction: "left-to-right", // The scrolling direction
+        // direction: "right-to-left"
     });
 
 
