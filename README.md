@@ -27,6 +27,7 @@ Check out the [demo](https://codepen.io/helgesverre/pen/OJJqGRd) on CodePen.
     var marquee = Marquee();
     marquee.init(document.getElementById("canvas"), {
         text: "This text is scrolling",
+        font: "monospace",
         fontSize: 25,
         bgColor: "black",
         gap: 10, 
