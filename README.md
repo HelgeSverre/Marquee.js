@@ -64,8 +64,4 @@ TODO
 ## Todo
 
 - [ ] Make better documentation
-- [ ] Make it ES6 friendly
 - [ ] Put it on NPM and all those fancy CDN places.
-- [ ] Allow the width to be set via options
-- [ ] when fullscreen it should resize when the browser windows is resized.
-- [x] Wonder why this was ever needed in the first place
